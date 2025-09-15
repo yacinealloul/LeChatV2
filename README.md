@@ -5,7 +5,9 @@
 <h2 align="center">Le Chat V2 — Mistral chat with inline charts</h2>
 
 <p align="center">
-  <img src="public/image.png" alt="Futuristic Liquid Glass UI preview" width="960" />
+  <video src="public/demo.mp4" controls playsinline muted loop width="960">
+    Sorry, your browser doesn't support embedded videos.
+  </video>
 </p>
 
 <p align="center">
