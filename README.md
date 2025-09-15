@@ -5,6 +5,10 @@
 <h2 align="center">Le Chat V2 — Mistral chat with inline charts</h2>
 
 <p align="center">
+  <img src="public/image.png" alt="Futuristic Liquid Glass UI preview" width="960" />
+</p>
+
+<p align="center">
   A tiny, modern chat app powered by Mistral that can render charts directly in the conversation.
   <br/>
   Built as a friendly, non‑commercial application for my SWE Mistral internship application.
