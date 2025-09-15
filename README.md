@@ -90,12 +90,12 @@ sequenceDiagram
 
 ```mermaid
 flowchart TD
-  A[Numeric data detected?] -->|No| B[Render text only]
-  A -->|Yes| C{Rows < 5?}
-  C -->|Yes| D[Render compact table]
-  C -->|No| E[Render chart inline]
-  E --> F[Compact axes (K/M/B/T)]
-  D --> G[Add short explanation]
+  A["Numeric data detected?"] -->|No| B["Render text only"]
+  A -->|Yes| C{"Rows &lt; 5?"}
+  C -->|Yes| D["Render compact table"]
+  C -->|No| E["Render chart inline"]
+  E --> F["Compact axes (K/M/B/T)"]
+  D --> G["Add short explanation"]
   E --> G
 ```
 
