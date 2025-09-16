@@ -9,6 +9,8 @@ export async function POST(req: NextRequest) {
     try {
         const { message, messages = [] } = await req.json()
         console.log('📨 Message received:', message)
+        console.log('📚 Messages history length:', messages.length)
+        console.log('📚 Last 2 messages:', messages.slice(-2))
 
         if (!message) {
             console.log('❌ No message provided')

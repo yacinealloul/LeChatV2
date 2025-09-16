@@ -56,7 +56,7 @@ export function ChatClient({ initialQuery }: ChatClientProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message, messages }),
+        body: JSON.stringify({ message, messages: newMessages }),
       })
 
       if (!response.ok) {

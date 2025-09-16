@@ -15,9 +15,12 @@ export async function streamChat(params: {
     const { controller, system, history, userMessage, tools } = params
     const out = sse(controller)
 
+    const finalMessages: Msg[] = [{ role: 'system', content: system }, ...history]
+    console.log('🤖 Full JSON to Mistral:', JSON.stringify(finalMessages, null, 2))
+
     const result = await mistral.chat.stream({
         model: 'mistral-large-latest',
-        messages: [{ role: 'system', content: system }, ...history, { role: 'user', content: userMessage }],
+        messages: finalMessages,
         tools,
         toolChoice: 'auto' as any
     })
@@ -37,7 +40,10 @@ export async function streamChat(params: {
                     const args = JSON.parse(toolCall.function.arguments || '{}')
                     await toolHandlers[name]?.({ args, out })
                     out.toolComplete({ name, message: 'Chart generated successfully' })
-                    setTimeout(() => out.toolHide({ name }), 800)
+                    // Add the tool data to assistant content for conversation history (hidden from UI)
+                    if (name === 'generate_chart') {
+                        out.content(`\n\n<!-- CHART_DATA:${JSON.stringify(args)} -->`)
+                    }
                 } catch (e: any) {
                     out.toolError({ name, message: 'Error generating chart', error: e?.message })
                 }

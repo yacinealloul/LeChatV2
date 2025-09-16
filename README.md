@@ -27,7 +27,6 @@ This project is not commercial. It’s only for my internship application and a 
 - I love the Liquid Glass UI aesthetic, so I built this Le Chat V2 in that style for my Mistral hometask — I’m convinced this look is the next UI wave.
 - I’m applying to the SWE internship at Mistral and wanted to show product taste, clean code, and a tiny “tool use” demo.
 - I love the idea of “Le Chat” that can not only talk but also visualize data when it’s helpful.
-- The issue: to render charts in Le Chat or even ChatGPT, you often have to run Python to generate a matplotlib image — which doesn’t make sense for a lightweight, web‑first chat.
 ---
 
 ### Problem → Solution → Explanation

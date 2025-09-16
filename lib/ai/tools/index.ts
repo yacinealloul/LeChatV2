@@ -4,7 +4,7 @@ export const tools: ToolDefinition[] = [
         type: 'function',
         function: {
             name: 'generate_chart',
-            description: 'Create a chart when asked or when numeric data visualization improves clarity.',
+            description: 'Create a chart ONLY when explicitly asked for charts/graphs OR when presenting numeric data that needs visualization (GDP, statistics, financial data, etc.). Do NOT use for general questions about countries, politics, or non-numeric topics.',
             parameters: {
                 type: 'object',
                 properties: {
