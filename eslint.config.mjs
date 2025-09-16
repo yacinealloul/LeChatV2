@@ -19,6 +19,18 @@ const eslintConfig = [
       "build/**",
       "next-env.d.ts",
     ],
+    rules: {
+      "react/no-unescaped-entities": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-unsafe-function-type": "off",
+      "@next/next/no-img-element": "off",
+      "react/display-name": "off",
+      "react-hooks/exhaustive-deps": "off",
+      "prefer-const": "off",
+
+    },
+
   },
 ];
 

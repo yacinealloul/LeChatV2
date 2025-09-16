@@ -8,8 +8,10 @@ import { motion } from "framer-motion"
 
 export default function ChatPage() {
   const searchParams = useSearchParams()
-  const initialQuery = searchParams.get('query') || ''
+  const initialQuery = searchParams.get('query') || '' // Faire attention a bien mettre ce que j'ai mit dans ligne 1
   return (
+
+
     <motion.div
       // Pour faire une transition sympa puisqu'on change de page pour que l'user ne voit pas 
       // To make sure that the transition is good and the user don't feel that we have changed the page.

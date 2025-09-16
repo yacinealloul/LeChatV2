@@ -18,7 +18,7 @@ interface MarkdownRendererOptimizedProps {
 // Memoized components (same as main component)
 const CodeComponent = memo(({ node, inline, className, children, ...props }: any) => {
   const match = /language-(\w+)/.exec(className || '')
-  
+
   if (!inline && match) {
     return (
       <SyntaxHighlighter
@@ -36,7 +36,7 @@ const CodeComponent = memo(({ node, inline, className, children, ...props }: any
       </SyntaxHighlighter>
     )
   }
-  
+
   return (
     <code className="bg-black/30 px-1 py-0.5 rounded text-sm" {...props}>
       {children}
@@ -44,7 +44,7 @@ const CodeComponent = memo(({ node, inline, className, children, ...props }: any
   )
 })
 
-const createSimpleComponent = (tag: string, className: string) => 
+const createSimpleComponent = (tag: string, className: string) =>
   memo(({ children }: any) => React.createElement(tag, { className }, children))
 
 // Pre-create all components to avoid recreation
@@ -73,14 +73,14 @@ const components = {
 const remarkPlugins = [remarkGfm]
 const rehypePlugins = [rehypeRaw, rehypeHighlight]
 
-function MarkdownRendererOptimized({ 
-  content, 
-  className = "", 
+function MarkdownRendererOptimized({
+  content,
+  className = "",
   isStreaming = false,
-  streamingThrottle = 100 
+  streamingThrottle = 100
 }: MarkdownRendererOptimizedProps) {
   const [displayContent, setDisplayContent] = useState(content)
-  const throttleRef = useRef<NodeJS.Timeout>()
+  const throttleRef = useRef<NodeJS.Timeout>(null)
   const lastUpdateRef = useRef<number>(0)
 
   // Advanced throttling for streaming content
@@ -117,7 +117,7 @@ function MarkdownRendererOptimized({
     }
   }, [content, isStreaming, streamingThrottle])
 
-  const memoizedClassName = useMemo(() => 
+  const memoizedClassName = useMemo(() =>
     `prose prose-invert prose-sm max-w-none ${className}`,
     [className]
   )
@@ -151,12 +151,12 @@ export default memo(MarkdownRendererOptimized, (prevProps, nextProps) => {
   // During streaming, be more selective about when to re-render
   if (prevProps.isStreaming && nextProps.isStreaming) {
     const contentLengthDiff = Math.abs(nextProps.content.length - prevProps.content.length)
-    
+
     // Skip re-render for very small changes
     if (contentLengthDiff < 5) {
       return true
     }
-    
+
     // Also skip if content only grew by whitespace
     if (nextProps.content.trim() === prevProps.content.trim()) {
       return true

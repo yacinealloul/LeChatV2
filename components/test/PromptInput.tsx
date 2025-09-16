@@ -497,7 +497,7 @@ export default function PromptInput({ isMobile = false }: PromptInputProps) {
 // Lightweight text scramble component for smooth letter morphing
 const TextScramble = memo(function TextScramble({ text, reduced = false, duration = 1200 }: { text: string; reduced?: boolean; duration?: number }) {
   const [output, setOutput] = useState<string>(text)
-  const frameRef = useRef<number>()
+  const frameRef = useRef<number>(0)
   const frame = useRef(0)
   const queue = useRef<{ from: string; to: string; start: number; end: number; char?: string }[]>([])
   const prevTextRef = useRef<string>("")

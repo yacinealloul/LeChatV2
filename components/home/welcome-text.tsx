@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 
 const TextScramble = memo(function TextScramble({ text, reduced = false, duration = 1200 }: { text: string; reduced?: boolean; duration?: number }) {
   const [output, setOutput] = useState<string>(text)
-  const frameRef = useRef<number>()
+  const frameRef = useRef<number>(0)
   const frame = useRef(0)
   const queue = useRef<{ from: string; to: string; start: number; end: number; char?: string }[]>([])
   const prevTextRef = useRef<string>("")
@@ -85,7 +85,7 @@ export default function WelcomeText() {
     ],
     []
   )
-  
+
   const [phraseIndex, setPhraseIndex] = useState(0)
   const prefersReducedMotion = useMemo(() => {
     if (typeof window === "undefined" || !("matchMedia" in window)) return false
