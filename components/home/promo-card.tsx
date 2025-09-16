@@ -86,7 +86,7 @@ export default function PromoCard() {
                                     loop
                                     playsInline
                                     onClick={handleVideoClick}
-                                    className="w-full rounded-xl object-cover border border-white/15 ring-1 ring-white/5 shadow-xl cursor-pointer"
+                                    className="w-full rounded-xl object-cover shadow-xl cursor-pointer"
                                 />
                             </div>
                         </div>

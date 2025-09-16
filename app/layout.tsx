@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic'
 // It has solved the issue 
-
+import NextPlausible from "next-plausible";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -17,36 +17,40 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Le Chat V2 — Mistral chat with inline charts",
+  title: {
+    template: "%s | Le Chat V2",
+    default: "Le Chat V2 — Mistral chat with inline charts",
+  },
   description: "A tiny, modern chat app powered by Mistral that can render charts directly in the conversation. Built as a friendly, non-commercial application for my SWE Mistral internship application.",
   keywords: ["chat", "AI", "Mistral", "charts", "data visualization", "web development", "internship", "Liquid Glass UI"],
   authors: [{ name: "Yacine Alloul" }],
   creator: "Yacine Alloul",
   publisher: "Yacine Alloul",
+  metadataBase: new URL("https://lechatv2.vercel.app"),
   icons: {
     icon: "/favicon.ico",
   },
   openGraph: {
     title: "Le Chat V2 — Mistral chat with inline charts",
     description: "A tiny, modern chat app powered by Mistral that can render charts directly in the conversation. Built as a friendly, non-commercial application for my SWE Mistral internship application.",
-    url: "https://mistral-internship.vercel.app",
+    type: "website",
+    url: "https://lechatv2.vercel.app",
     siteName: "Le Chat V2",
     images: [
       {
-        url: "/opengraph.png",
+        url: "https://lechatv2.vercel.app/opengraph.png",
         width: 960,
         height: 540,
         alt: "Le Chat V2 - Futuristic Liquid Glass UI preview"
       },
     ],
     locale: "en_US",
-    type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Le Chat V2 — Mistral chat with inline charts",
     description: "A tiny, modern chat app powered by Mistral that can render charts directly in the conversation.",
-    images: ["/opengraph.png"],
+    images: ["https://lechatv2.vercel.app/opengraph.png"],
     creator: "@0xmilliounaire",
   },
   robots: {
@@ -64,7 +68,8 @@ export const metadata: Metadata = {
     width: "device-width",
     initialScale: 1,
   },
-};
+}
+
 
 export default function RootLayout({
   children,
@@ -72,13 +77,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}
-      >
-        <InteractiveBackground />
-        {children}
-      </body>
-    </html>
+    <NextPlausible domain="lechatv2.vercel.app">
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}
+        >
+          <InteractiveBackground />
+          {children}
+        </body>
+      </html>
+    </NextPlausible>
   );
 }
