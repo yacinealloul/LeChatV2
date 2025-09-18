@@ -1,6 +1,6 @@
 "use client"
 
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts'
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, Legend } from 'recharts'
 
 interface ChartData {
   type: 'line' | 'bar' | 'pie' | 'area'
@@ -8,22 +8,63 @@ interface ChartData {
   data: any[]
   labels?: string[]
   id: string
+  series?: string[] // Array of keys for multiple data series in line charts
 }
 
 interface ChartProps {
   chart: ChartData
 }
 
+const CustomLegend = ({ payload }: any) => {
+  if (!payload || payload.length === 0) return null
+
+  return (
+    <div className="flex flex-wrap justify-center gap-4 mt-4 mb-2">
+      {payload.map((entry: any, index: number) => (
+        <div key={index} className="flex items-center gap-2">
+          <div
+            className="w-3 h-3 rounded-full"
+            style={{ backgroundColor: entry.color }}
+          />
+          <span className="text-white/80 text-sm font-medium">
+            {entry.value}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
+    // Check if this is a single-series chart (dataKey = "value")
+    const isSingleSeries = payload.length === 1 && payload[0].dataKey === 'value'
+
     return (
-      <div className="bg-black/80 border border-white/20 rounded-lg px-3 py-2 text-sm">
-        <p className="text-white font-medium mb-1">{label}</p>
-        {payload.map((entry: any, index: number) => (
-          <p key={index} className="text-white/80">
-            {typeof entry.value === 'number' ? entry.value.toLocaleString() : entry.value}
-          </p>
-        ))}
+      <div className="bg-black/90 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-3 text-sm shadow-2xl">
+        <p className="text-white font-semibold mb-2">{label}</p>
+        {isSingleSeries ? (
+          // Single series: just show the value without "value:" label
+          <div className="flex items-center justify-center">
+            <span className="font-mono text-white text-lg">
+              {typeof payload[0].value === 'number' ? payload[0].value.toLocaleString() : payload[0].value}
+            </span>
+          </div>
+        ) : (
+          // Multi-series: show each series with its name
+          payload.map((entry: any, index: number) => (
+            <div key={index} className="flex items-center gap-3 text-white/90 mb-1 last:mb-0">
+              <div
+                className="w-2.5 h-2.5 rounded-full"
+                style={{ backgroundColor: entry.color }}
+              />
+              <span className="font-medium min-w-0 flex-1">{entry.dataKey}:</span>
+              <span className="font-mono text-white">
+                {typeof entry.value === 'number' ? entry.value.toLocaleString() : entry.value}
+              </span>
+            </div>
+          ))
+        )}
       </div>
     )
   }
@@ -43,11 +84,24 @@ const chartColors = [
   'rgba(255, 255, 255, 0.15)' // subtle white glass
 ]
 
+const lineColors = [
+  '#3b82f6', // blue
+  '#10b981', // emerald
+  '#f59e0b', // amber
+  '#ef4444', // red
+  '#8b5cf6', // violet
+  '#06b6d4', // cyan
+  '#f97316', // orange
+  '#84cc16', // lime
+  '#ec4899', // pink
+  '#6366f1', // indigo
+]
+
 export default function Chart({ chart }: ChartProps) {
   const safeData = Array.isArray(chart.data) ? chart.data : []
 
-  // Memoize the chart to prevent unnecessary re-renders
-  const chartKey = `${chart.type}-${chart.id || ''}-${JSON.stringify(chart.data)}`
+  // Stable key to prevent unnecessary re-renders
+  const chartKey = `${chart.type}-${chart.id || ''}-${chart.data?.length || 0}`
 
   const parseNumber = (raw: any): number => {
     if (raw === null || raw === undefined) return NaN
@@ -73,6 +127,21 @@ export default function Chart({ chart }: ChartProps) {
   const transformedData = safeData.map((item, index) => {
     // Handle different data formats
     const name = item.label || item.name || item.ticker || item.symbol || item.x || item.category || item.key || `Item ${index + 1}`
+
+    // For line charts with multiple series
+    if (chart.type === 'line' && chart.series && chart.series.length > 0) {
+      const dataPoint: any = { name: String(name) }
+
+      // Extract values for each series
+      chart.series.forEach(seriesKey => {
+        const value = parseNumber(item[seriesKey])
+        dataPoint[seriesKey] = isNaN(value) ? 0 : value
+      })
+
+      return dataPoint
+    }
+
+    // For single-value charts (bar, pie, area, single-line)
     const candidates = [
       item.value,
       item.y,
@@ -122,51 +191,76 @@ export default function Chart({ chart }: ChartProps) {
     switch (chart.type) {
       case 'line':
         return (
-          <LineChart data={transformedData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
+          <LineChart data={transformedData} margin={{ top: 16, right: 36, left: 28, bottom: 16 }}>
             <XAxis
               dataKey="name"
-              stroke="rgba(255, 255, 255, 0.6)"
-              fontSize={14}
-              tick={{ fill: 'rgba(255, 255, 255, 0.6)' }}
+              axisLine={true}
+              tickLine={false}
+              stroke="rgba(255, 255, 255, 0.7)"
+              fontSize={12}
+              tick={{ fill: 'rgba(255, 255, 255, 0.7)' }}
               angle={0}
               textAnchor="middle"
-              height={30}
+              height={36}
             />
             <YAxis
-              stroke="rgba(255, 255, 255, 0.6)"
-              fontSize={14}
-              tick={{ fill: 'rgba(255, 255, 255, 0.6)' }}
+              axisLine={true}
+              tickLine={false}
+              stroke="rgba(255, 255, 255, 0.7)"
+              fontSize={12}
+              tick={{ fill: 'rgba(255, 255, 255, 0.7)' }}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Line
-              type="monotone"
-              dataKey="value"
-              stroke="#3b82f6"
-              strokeWidth={3}
-              dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
-              activeDot={{ r: 6, fill: '#3b82f6', strokeWidth: 2 }}
-            />
+            {chart.series && chart.series.length > 0 && (
+              <Legend content={<CustomLegend />} />
+            )}
+            {chart.series && chart.series.length > 0 ? (
+              // Multiple lines
+              chart.series.map((seriesKey, index) => (
+                <Line
+                  key={seriesKey}
+                  type="monotone"
+                  dataKey={seriesKey}
+                  stroke={lineColors[index % lineColors.length]}
+                  strokeWidth={2.5}
+                  dot={false}
+                  activeDot={{ r: 5, fill: lineColors[index % lineColors.length], strokeWidth: 0 }}
+                />
+              ))
+            ) : (
+              // Single line (backward compatibility)
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#3b82f6"
+                strokeWidth={2.5}
+                dot={false}
+                activeDot={{ r: 5, fill: '#3b82f6', strokeWidth: 0 }}
+              />
+            )}
           </LineChart>
         )
 
       case 'area':
         return (
-          <AreaChart data={transformedData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
+          <AreaChart data={transformedData} margin={{ top: 16, right: 36, left: 28, bottom: 16 }}>
             <XAxis
               dataKey="name"
-              stroke="rgba(255, 255, 255, 0.6)"
-              fontSize={14}
-              tick={{ fill: 'rgba(255, 255, 255, 0.6)' }}
+              axisLine={true}
+              tickLine={false}
+              stroke="rgba(255, 255, 255, 0.7)"
+              fontSize={12}
+              tick={{ fill: 'rgba(255, 255, 255, 0.7)' }}
               angle={0}
               textAnchor="middle"
-              height={30}
+              height={36}
             />
             <YAxis
-              stroke="rgba(255, 255, 255, 0.6)"
-              fontSize={14}
-              tick={{ fill: 'rgba(255, 255, 255, 0.6)' }}
+              axisLine={true}
+              tickLine={false}
+              stroke="rgba(255, 255, 255, 0.7)"
+              fontSize={12}
+              tick={{ fill: 'rgba(255, 255, 255, 0.7)' }}
             />
             <Tooltip content={<CustomTooltip />} />
             <Area
@@ -181,21 +275,24 @@ export default function Chart({ chart }: ChartProps) {
 
       case 'bar':
         return (
-          <BarChart data={transformedData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
+          <BarChart data={transformedData} margin={{ top: 16, right: 36, left: 28, bottom: 16 }}>
             <XAxis
               dataKey="name"
-              stroke="rgba(255, 255, 255, 0.6)"
-              fontSize={14}
-              tick={{ fill: 'rgba(255, 255, 255, 0.6)' }}
+              axisLine={true}
+              tickLine={false}
+              stroke="rgba(255, 255, 255, 0.7)"
+              fontSize={12}
+              tick={{ fill: 'rgba(255, 255, 255, 0.7)' }}
               angle={0}
               textAnchor="middle"
-              height={30}
+              height={36}
             />
             <YAxis
-              stroke="rgba(255, 255, 255, 0.6)"
-              fontSize={14}
-              tick={{ fill: 'rgba(255, 255, 255, 0.6)' }}
+              axisLine={true}
+              tickLine={false}
+              stroke="rgba(255, 255, 255, 0.7)"
+              fontSize={12}
+              tick={{ fill: 'rgba(255, 255, 255, 0.7)' }}
             />
             <Tooltip content={<CustomTooltip />} />
             <Bar
@@ -239,7 +336,7 @@ export default function Chart({ chart }: ChartProps) {
       {chart.title && (
         <h3 className="text-white/90 font-medium text-lg tracking-tight mb-2">{chart.title}</h3>
       )}
-      <div className={chart.type === 'pie' ? "h-[405px] w-full" : "h-80 w-full"}>
+      <div className={chart.type === 'pie' ? "h-[405px] w-full pl-2 pr-6 sm:pl-3 sm:pr-8 pt-2 pb-2" : "h-80 w-full pl-2 pr-6 sm:pl-3 sm:pr-8 pt-2 pb-2"}>
         <ResponsiveContainer width="100%" height="100%">
           {renderChart()}
         </ResponsiveContainer>

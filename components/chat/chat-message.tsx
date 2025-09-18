@@ -38,7 +38,7 @@ export function ChatMessage({ message, isStreaming, index }: ChatMessageProps) {
 
             {/* Render charts if any - show only the latest chart */}
             {message.charts && message.charts.length > 0 && (
-              <div className="mt-4">
+              <div className="mt-6">
                 <Chart key={`${message.id || index}-chart-${message.charts.length - 1}`} chart={message.charts[message.charts.length - 1]} />
               </div>
             )}

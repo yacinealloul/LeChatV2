@@ -10,8 +10,9 @@ export const tools: ToolDefinition[] = [
                 properties: {
                     type: { type: 'string', enum: ['line', 'bar', 'pie', 'area'] },
                     title: { type: 'string' },
-                    data: { type: 'array', description: 'Array of {label, value}' },
-                    labels: { type: 'array', description: 'Optional axis/category labels' }
+                    data: { type: 'array', description: 'Array of data points. For single series: {label, value}. For multi-line charts: {label, series1, series2, ...}' },
+                    labels: { type: 'array', description: 'Optional axis/category labels' },
+                    series: { type: 'array', description: 'Optional array of series names for multi-line charts (e.g., ["sales", "profits", "costs"])' }
                 },
                 required: ['type', 'title', 'data']
             }

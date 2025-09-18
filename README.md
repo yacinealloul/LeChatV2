@@ -157,6 +157,7 @@ App runs on `http://localhost:3000`.
 - Change tool behavior/schemas: `lib/ai/tools/index.ts` and `lib/ai/tools/handlers.ts`.
 - Adjust history trimming: `lib/ai/conversation.ts` (currently `slice(-40)`).
 - Next.js config hint to silence monorepo warnings: `next.config.ts` (`experimental.outputFileTracingRoot`).
+ - Next.js config: see `next.config.mjs`.
 
 ---
 

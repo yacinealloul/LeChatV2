@@ -4,12 +4,15 @@ import { IconBrandLinkedin, IconBrandX, IconFileText } from "@tabler/icons-react
 
 export default function PromoCard() {
     const [open, setOpen] = useState(true)
-    const tweetText = encodeURIComponent("Hey I'm Yacine and I'm a nice guy who applied to the SWE Mistral internship — my background is also nice and unexpected :)")
-    const tweetIntentUrl = `https://twitter.com/intent/tweet?text=${tweetText}`
-    const tweetId = "1967339867932954834" // set your tweet id here to enable direct Repost
-    const repostUrl = tweetId ? `https://twitter.com/intent/retweet?tweet_id=${tweetId}` : tweetIntentUrl
 
     const videoRef = useRef<HTMLVideoElement | null>(null)
+
+    useEffect(() => {
+        try {
+            const seen = localStorage.getItem("promoCardSeen")
+            if (seen === "1") setOpen(false)
+        } catch { }
+    }, [])
 
     useEffect(() => {
         const video = videoRef.current
@@ -19,7 +22,6 @@ export default function PromoCard() {
             try {
                 video.playbackRate = 2
             } catch { }
-            // Ensure autoplay works across browsers
             video.muted = true
             try {
                 video.play().catch(() => { })
@@ -37,6 +39,11 @@ export default function PromoCard() {
         }
     }, [])
 
+    const closeAndRemember = () => {
+        try { localStorage.setItem("promoCardSeen", "1") } catch { }
+        setOpen(false)
+    }
+
     const handleVideoClick = () => {
         const video = videoRef.current
         if (!video) return
@@ -51,7 +58,7 @@ export default function PromoCard() {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} />
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeAndRemember} />
 
             <motion.div
                 initial={{ opacity: 0, scale: 0.96, y: 8 }}
@@ -61,7 +68,7 @@ export default function PromoCard() {
             >
                 {/* close button */}
                 <button
-                    onClick={() => setOpen(false)}
+                    onClick={closeAndRemember}
                     aria-label="Close"
                     className="absolute right-3 top-3 text-3xl z-10 h-8 w-8 rounded-full text-white/70 hover:text-white"
                 >
@@ -101,15 +108,7 @@ export default function PromoCard() {
                                 <IconFileText size={18} className="mr-2" />
                                 My CV
                             </a>
-                            <a
-                                href={repostUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex w-full justify-center items-center rounded-lg border border-white/20 hover:border-white/40 px-4 py-2.5 text-sm font-medium transition-colors"
-                            >
-                                <IconBrandX size={18} className="mr-2" />
-                                Repost
-                            </a>
+
                             <a
                                 href="https://www.linkedin.com/in/yacine-alloul-96295a229/"
                                 target="_blank"
